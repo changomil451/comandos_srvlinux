@@ -1,0 +1,81 @@
+41. 
+Librería: vim /usr/lib/systemd/system/ctrl-alt-del.target
+
+[Unit] 
+Description=Reboot 
+DefaultDependencies=no 
+
+[Service]
+ Type=oneshot 
+ExecStart=/bin/echo "Control-Alt-Delete desactivado por el administrador"
+
+4.2
+Librería: /etc/sysctl.d/50-default.conf
+net.ipv4.tcp_tw_reuse = 1  
+net.ipv4.tcp_tw_recycle = 1
+
+4.3
+Librería: /etc/sysctl.d/50-default.conf
+#### Redes IPv4 e IPv6 parámetros equivalentes ####
+## Protección para inundaciones tipo TCP SYN (por defecto)
+## Ayuda a proteger contra ataques de inundación SYN
+## Sólo se activa cuando se alcanza net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_syncookies = 1
+## Proteger contra riesgos de kill al superar los tiempos de espera tcp.
+## Eliminar paquetes RST para los sockets en el estado de tiempo de espera
+## (No es ampliamente apoyado fuera de linux, pero se ajusta a RFC)
+net.ipv4.tcp_rfc1337 = 1
+## Hará la validación fuente de paquetes recibidos de todas las interfaces de la máquina
+## Protege de los atacantes que utilizan métodos de falsificación de IP para hacer daño
+net.ipv4.conf.all.rp_filter = 1
+net.ipv6.conf.all.rp_filter = 1
+## Marcas de tiempo tcp
+## + Protegerse de los números de secuencia de envoltura (a velocidades de gigabit)
+## + Cálculo del tiempo de ida y vuelta implementado en TCP
+## - Provoca sobrecarga adicional y permite la detección de tiempo de actividad por los
+escáneres como nmap
+## Permitirá velocidades gigabit @
+net.ipv4.tcp_timestamps = 0
+# net.ipv4.tcp_timestamps = 1
+## Log paquetes marcianos
+net.ipv4.conf.all.log_martians = 1
+## Ignorar solicitudes de difusión de eco para evitar ser parte de los ataques Smurf (por
+defecto)
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+## Ignorar los errores ICMP falsos (por defecto)
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+## Enviar redirecciones (Si no es un router, desactivarlo)
+net.ipv4.conf.all.send_redirects = 0
+## ICMP redirecciones de enrutamiento (sólo vigilado)
+# net.ipv4.conf.all.secure_redirects = 1 (por defecto)
+net/ipv4/conf/default/accept_redirects = 0
+net/ipv4/conf/all/accept_redirects = 0
+net/ipv6/conf/default/accept_redirects = 0
+net/ipv6/conf/all/accept_redirects = 0
+
+4.4
+Librería:  /etc/sysctl.d/50-default.conf
+# los hilos Flusher kernel fond comenzarán a escribir datos basura. 
+vm.dirty_background_ratio = 2
+
+4.5
+Librería:  /etc/sysctl.d/50-default.conf
+# Set velocidad máxima y mínima de las operaciones de incursión resincronización
+dev.raid.speed_limit_max = 10,000	
+dev.raid.speed_limit_min = 1,000 
+5.5
+Librería: /etc/pam.d/system-login
+
+# /etc/pam.d/system-login
+auth required pam_tally.so unlock_time deny = 2 = 600 = success onerr file = /var/log/faillog
+#auth required pam_tally.so success onerr = file = /var/log/faillog
+
+Para desbloquear un usuario manualmente hacer:
+# Pam_tally --user --reset
+
+5.1 creacion de usuario y contraseña
+
+#visudo
+
+
+
